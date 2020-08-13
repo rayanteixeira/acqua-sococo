@@ -112,11 +112,19 @@ public class ProdutoController {
 
         ModelAndView view = new ModelAndView(PRODUTOS_VIEW);
 
+        if (erros.hasErrors()) {
+            return new ModelAndView(CADASTRO_VIEW);
+        }
+
+        if (!file.isEmpty()) {
+            AvatarProd avatar = avatarService.getAvatarByUpload(file);
+            avatar.setId(produto.getAvatar().getId());
+            produto.setAvatar(avatar);
+        }
+
         try {
-            System.out.println("Existe File: " + file.isEmpty());
-            System.out.println("Produto avatar ID: " + produto.avatar.getId());
-            produtoService.update(produto, file);
-            attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
+            produtoService.update(produto);
+            attributes.addFlashAttribute("mensagem", "Produto atualizado com sucesso!");
 
             return view;
         } catch (IllegalArgumentException e) {

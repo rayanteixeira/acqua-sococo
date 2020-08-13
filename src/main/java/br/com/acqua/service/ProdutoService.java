@@ -5,12 +5,12 @@ import br.com.acqua.entity.Produto;
 import br.com.acqua.repository.ProdutoRepository;
 import br.com.acqua.repository.filter.ProdutoFilter;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -65,25 +65,12 @@ public class ProdutoService {
     }
 
     @Transactional(readOnly = false)
-    public void update(Produto produto, MultipartFile file) {
-
-        AvatarProd avatar = avatarService.getAvatarByUpload(file);
-
-        System.out.println("Titulo: " + avatar.getTitulo());
-        System.out.println("tipo: " + avatar.getTipo());
+    public void update(Produto produto) {
 
         try {
-            if (avatar.getTitulo().equals("default.png")) {
-                produtosRepository.updateNomeAndDescricaoAndCodigoBarra(produto.getNome(), produto.getDescricao(),
-                        produto.getCodigoDeBarras(), produto.getId());
-            } else {
-                AvatarProd avatarSave = avatarService.saveOrUpdate(avatar);
-                produto.setAvatar(avatarSave);
-                produtosRepository.save(produto);
-            }
-
-        } catch (Exception e) {
-            throw new IllegalArgumentException("Falha em Atualizar o produto");
+            produtosRepository.save(produto);
+        } catch (DataIntegrityViolationException e) {
+            throw new IllegalArgumentException("algo deu errado tente mais tarde!");
         }
 
     }
