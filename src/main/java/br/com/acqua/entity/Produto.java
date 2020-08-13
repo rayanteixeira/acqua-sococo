@@ -6,18 +6,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
+import br.com.acqua.entity.enuns.Categoria;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -63,6 +54,16 @@ public class Produto implements Serializable {
 	
 	@Column(name = "enabled")
 	private boolean enabled;
+
+	@Column(name = "categoria")
+	@Enumerated(EnumType.STRING)
+	private Categoria categoria;
+
+	@Column(name = "marca")
+	private String marca;
+
+	@Column(name = "volume")
+	private String volume;
 
 	@OneToMany(mappedBy = "produto", cascade = { CascadeType.PERSIST, CascadeType.MERGE })
 	private List<Movimentacao> movimentacoes = new ArrayList<>();
@@ -143,6 +144,30 @@ public class Produto implements Serializable {
 		this.enabled = enabled;
 	}
 
+	public Categoria getCategoria() {
+		return categoria;
+	}
+
+	public void setCategoria(Categoria categoria) {
+		this.categoria = categoria;
+	}
+
+	public String getMarca() {
+		return marca;
+	}
+
+	public void setMarca(String marca) {
+		this.marca = marca;
+	}
+
+	public String getVolume() {
+		return volume;
+	}
+
+	public void setVolume(String volume) {
+		this.volume = volume;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (this == o) {
@@ -164,9 +189,19 @@ public class Produto implements Serializable {
 	}
 
 	@Override
-	public String toString() {
-		return "Produto{" + "id=" + getId() + ", codigoDeBarras='" + getCodigoDeBarras() + "'" + ", descricao='"
-				+ getDescricao() + "'" + ", imagem='" + getAvatar().getTitulo() + "'" + ", imagemContentType='"
-				+ imagemContentType + "'" + "}";
+	public String  toString() {
+		return "Produto{" +
+				"id=" + id +
+				", nome='" + nome + '\'' +
+				", codigoDeBarras='" + codigoDeBarras + '\'' +
+				", descricao='" + descricao + '\'' +
+				", dataCadastro=" + dataCadastro +
+				", avatar=" + avatar +
+				", imagemContentType='" + imagemContentType + '\'' +
+				", enabled=" + enabled +
+				", categoria=" + categoria +
+				", marca='" + marca + '\'' +
+				", volume='" + volume + '\'' +
+				'}';
 	}
 }

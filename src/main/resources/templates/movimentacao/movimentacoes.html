@@ -104,8 +104,10 @@
 						</thead>
 						<tbody>
 							<tr th:each="movimentacao: ${movimentacoes}">
-								<td class="text-center"><img id="avatar"
-									th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
+								<td class="text-center">
+									<span th:if="${movimentacao.avatar != null}">
+										<img id="avatar" th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
+									</span>
 								</td>
 
 								<td class="text-center"

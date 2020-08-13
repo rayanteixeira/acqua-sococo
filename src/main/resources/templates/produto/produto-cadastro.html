@@ -40,12 +40,10 @@
 
 						<input type="hidden" th:field="*{id}" /> 
 						<input type="hidden" th:field="*{dataCadastro}" /> 
-							<input type="hidden" th:field="*{avatar}" />
+						<input type="hidden" th:field="*{avatar}" />
 
 						<div layout:include="layout/mensagem-erro"></div>
 						<div layout:include="layout/mensagem-geral"></div>
-
-
 
 						<div style="padding: 5% 10px 5% 10px;" class="row">
 							<div class="text-center col-lg-3 col-md-3 col-sm-4 col-lg-offset-1">
@@ -87,6 +85,28 @@
 									<label for="descricao">Descrição</label> <input type="text"
 										class="form-control" id="descricao" th:field="*{descricao}"
 										placeholder="Descricao" />
+								</div>
+								<div class="form-group col-lg-11"
+									 th:classappend="${#fields.hasErrors('marca')} ? has-error">
+									<label for="marca">Marca</label> <input type="text"
+																			class="form-control" id="marca" th:field="*{marca}"
+																			placeholder="Marca" />
+								</div>
+								<div class="form-group col-lg-11"
+									 th:classappend="${#fields.hasErrors('volume')} ? has-error">
+									<label for="marca">Volume</label>
+									<input type="text"
+										   class="form-control" id="volume" th:field="*{volume}"
+										   placeholder="Volume" />
+								</div>
+								<div class="form-group  col-lg-11">
+									<label for="categoria">Categorias</label>
+									<select class="form-control" name="categoria" id="categoria">
+										<option th:each="categoria : ${categorias}"
+												th:value="${categoria}" th:text="${categoria.descricao}"
+												th:field="*{categoria}"/>
+
+									</select>
 								</div>
 
 								<div class="form-group col-lg-8">

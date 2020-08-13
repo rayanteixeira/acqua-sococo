@@ -1,141 +1,150 @@
 package br.com.acqua.controller;
 
-import java.util.Optional;
-
+import br.com.acqua.entity.AvatarProd;
+import br.com.acqua.entity.Produto;
+import br.com.acqua.entity.enuns.Categoria;
+import br.com.acqua.entity.paginator.Pager;
+import br.com.acqua.service.AvatarProdService;
+import br.com.acqua.service.ProdutoService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import br.com.acqua.entity.Produto;
-import br.com.acqua.entity.paginator.Pager;
-import br.com.acqua.service.ProdutoService;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/produtos")
 public class ProdutoController {
 
-	private static final int BUTTONS_TO_SHOW = 5;
-	private static final int INITIAL_PAGE = 0;
-	private static final int INITIAL_PAGE_SIZE = 5;
-	private static final int[] PAGE_SIZES = { 5, 10, 20 };
+    private static final int BUTTONS_TO_SHOW = 15;
+    private static final int INITIAL_PAGE = 0;
+    private static final int INITIAL_PAGE_SIZE = 20;
+    private static final int[] PAGE_SIZES = {5, 10, 20};
 
-	private static final String CADASTRO_VIEW = "produto/produto-cadastro";
-	private static final String ATUALIZAR_VIEW = "produto/produto-atualizar";
-	private static final String PRODUTOS_VIEW = "redirect:/produtos";
+    private static final String CADASTRO_VIEW = "produto/produto-cadastro";
+    private static final String ATUALIZAR_VIEW = "produto/produto-atualizar";
+    private static final String PRODUTOS_VIEW = "redirect:/produtos";
 
-	@Autowired
-	private ProdutoService produtoService;
+    @Autowired
+    private ProdutoService produtoService;
 
-	@GetMapping
-	public ModelAndView showPersonsPage(@RequestParam("pageSize") Optional<Integer> pageSize,
-			@RequestParam("page") Optional<Integer> page) {
+    @Autowired
+    private AvatarProdService avatarService;
 
-		ModelAndView modelAndView = new ModelAndView("produto/produtos");
+    @GetMapping
+    public ModelAndView showPersonsPage(@RequestParam("pageSize") Optional<Integer> pageSize,
+                                        @RequestParam("page") Optional<Integer> page) {
 
-		int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
+        ModelAndView modelAndView = new ModelAndView("produto/produtos");
 
-		int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
+        int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 
-		Page<Produto> produtos = produtoService.findByPagination(evalPage, evalPageSize);
-		Pager pager = new Pager(produtos.getTotalPages(), produtos.getNumber(), BUTTONS_TO_SHOW);
+        int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
 
-		modelAndView.addObject("produtos", produtos);
-		modelAndView.addObject("selectedPageSize", evalPageSize);
-		modelAndView.addObject("pageSizes", PAGE_SIZES);
-		modelAndView.addObject("pager", pager);
-		return modelAndView;
-	}
+        Page<Produto> produtos = produtoService.findByPagination(evalPage, evalPageSize);
+        Pager pager = new Pager(produtos.getTotalPages(), produtos.getNumber(), BUTTONS_TO_SHOW);
 
-	@GetMapping("/novo")
-	public ModelAndView novo() {
-		ModelAndView view = new ModelAndView(CADASTRO_VIEW);
-		view.addObject("produto", new Produto());
-		return view;
-	}
+        modelAndView.addObject("produtos", produtos);
+        modelAndView.addObject("selectedPageSize", evalPageSize);
+        modelAndView.addObject("pageSizes", PAGE_SIZES);
+        modelAndView.addObject("pager", pager);
+        return modelAndView;
+    }
 
-	@PostMapping
-	public String salvar(@Validated Produto produto, Errors erros, RedirectAttributes attributes,
-			@RequestParam(value = "file", required = false) MultipartFile file) {
+    @GetMapping("/novo")
+    public ModelAndView novo() {
+        ModelAndView view = new ModelAndView(CADASTRO_VIEW);
+        view.addObject("produto", new Produto());
+        return view;
+    }
 
-		if (erros.hasErrors()) {
-			return CADASTRO_VIEW;
-		}
+    @PostMapping
+    public String salvar(@Validated Produto produto, Errors erros, RedirectAttributes attributes,
+                         @RequestParam(value = "file", required = false) MultipartFile file) {
 
-		try {
-			
-			produto.setEnabled(true);
-			produtoService.salvar(produto, file);
-			attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
-			return "redirect:/produtos";
+        if (erros.hasErrors()) {
+            return CADASTRO_VIEW;
+        }
 
-		} catch (IllegalArgumentException e) {
-			erros.rejectValue("Erro no cadastro", null, e.getMessage());
-			return CADASTRO_VIEW;
-		}
-	}
+        if (!file.isEmpty()) {
+            AvatarProd avatar = avatarService.getAvatarByUpload(file);
+            produto.setAvatar(avatar);
+        }
 
-	@GetMapping("/detalhes/{id}")
-	public ModelAndView perfil(@PathVariable("id") Produto produto) {
-		ModelAndView view = new ModelAndView();
-		view.setViewName("produto/produto-detalhes");
-		view.addObject("produto", produto);
-		return view;
-	}
+        try {
+            produtoService.salvar(produto);
+            attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
+            return "redirect:/produtos";
 
-	@GetMapping("/{id}")
-	public ModelAndView preeditar(@PathVariable("id") Produto produto) {
-		ModelAndView view = new ModelAndView(ATUALIZAR_VIEW);
-		view.addObject(produto);
-		return view;
-	}
-	
-	@PostMapping("/update")
-	public ModelAndView editar(@Validated @ModelAttribute("produto") Produto produto,
-			Errors erros, RedirectAttributes attributes,
-			@RequestParam(value = "file", required = false) MultipartFile file) {
-		
-		ModelAndView view = new ModelAndView(PRODUTOS_VIEW);
-		
-		try {
-			System.out.println("Existe File: " + file.isEmpty());
-			System.out.println("Produto avatar ID: " + produto.avatar.getId());
-			produtoService.update(produto, file);
-			attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
-			
-			return view;
-		} catch (IllegalArgumentException e) {
-			erros.rejectValue("Erro no cadastro", null, e.getMessage());
-			return view;
-		}
-		
-	}
+        } catch (IllegalArgumentException e) {
+            erros.rejectValue("Erro no cadastro", null, e.getMessage());
+            return CADASTRO_VIEW;
+        }
+    }
 
-	@DeleteMapping("{id}")
-	public String excluir(@PathVariable("id") Long id, RedirectAttributes attributes) {
-		System.out.println("delete");
-		produtoService.delete(id);
-		attributes.addFlashAttribute("mensagem", "Produto excluido com sucesso!");
-		return "redirect:/produtos";
-	}
-	
-	@PostMapping("/enabled/{id}")
-	public String updateEnabled(@PathVariable("id") Long id, RedirectAttributes attributes) {
-		System.out.println("post");
-		produtoService.updateEnable(id);
-		attributes.addFlashAttribute("mensagem", "Produto excluido com sucesso!");
-		return "redirect:/produtos";
-	}
+    @GetMapping("/detalhes/{id}")
+    public ModelAndView perfil(@PathVariable("id") Produto produto) {
+        ModelAndView view = new ModelAndView();
+        view.setViewName("produto/produto-detalhes");
+        view.addObject("produto", produto);
+        return view;
+    }
+
+    @GetMapping("/{id}")
+    public ModelAndView preeditar(@PathVariable("id") Produto produto) {
+        ModelAndView view = new ModelAndView(ATUALIZAR_VIEW);
+        view.addObject(produto);
+        return view;
+    }
+
+    @PostMapping("/update")
+    public ModelAndView editar(@Validated @ModelAttribute("produto") Produto produto,
+                               Errors erros, RedirectAttributes attributes,
+                               @RequestParam(value = "file", required = false) MultipartFile file) {
+
+        ModelAndView view = new ModelAndView(PRODUTOS_VIEW);
+
+        try {
+            System.out.println("Existe File: " + file.isEmpty());
+            System.out.println("Produto avatar ID: " + produto.avatar.getId());
+            produtoService.update(produto, file);
+            attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
+
+            return view;
+        } catch (IllegalArgumentException e) {
+            erros.rejectValue("Erro no cadastro", null, e.getMessage());
+            return view;
+        }
+
+    }
+
+    @DeleteMapping("{id}")
+    public String excluir(@PathVariable("id") Long id, RedirectAttributes attributes) {
+        System.out.println("delete");
+        produtoService.delete(id);
+        attributes.addFlashAttribute("mensagem", "Produto excluido com sucesso!");
+        return "redirect:/produtos";
+    }
+
+    @PostMapping("/enabled/{id}")
+    public String updateEnabled(@PathVariable("id") Long id, RedirectAttributes attributes) {
+        System.out.println("post");
+        produtoService.updateEnable(id);
+        attributes.addFlashAttribute("mensagem", "Produto excluido com sucesso!");
+        return "redirect:/produtos";
+    }
+
+    @ModelAttribute("categorias")
+    public List<Categoria> todoStatusTitulo() {
+        return Arrays.asList(Categoria.values());
+    }
 
 }
