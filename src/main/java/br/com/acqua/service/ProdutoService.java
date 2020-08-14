@@ -11,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -28,8 +29,9 @@ public class ProdutoService {
     public void salvar(Produto produto) {
 
         try {
-            if (produto.getId() == null) {
+            if (StringUtils.isEmpty(produto.getId())) {
                 produto.setDataCadastro(Date.valueOf(LocalDate.now()));
+                produto.setEnabled(true);
             }
             produtosRepository.save(produto);
 
@@ -80,9 +82,7 @@ public class ProdutoService {
     }
 
     public void updateEnable(Long id) {
-        System.out.println("Passou aqui");
         produtosRepository.updateEnable(false, id);
-
     }
 
 }

@@ -1,14 +1,19 @@
 package br.com.acqua.controller;
 
 import br.com.acqua.entity.AvatarProd;
+import br.com.acqua.entity.LayoutProd;
 import br.com.acqua.entity.Produto;
 import br.com.acqua.entity.enuns.Categoria;
 import br.com.acqua.entity.paginator.Pager;
 import br.com.acqua.service.AvatarProdService;
 import br.com.acqua.service.ProdutoService;
+import br.com.acqua.service.StorageService;
+import br.com.acqua.service.storage.StorageFileNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -39,6 +44,9 @@ public class ProdutoController {
     @Autowired
     private AvatarProdService avatarService;
 
+    @Autowired
+    private StorageService storageService;
+
     @GetMapping
     public ModelAndView showPersonsPage(@RequestParam("pageSize") Optional<Integer> pageSize,
                                         @RequestParam("page") Optional<Integer> page) {
@@ -66,38 +74,6 @@ public class ProdutoController {
         return view;
     }
 
-    @PostMapping
-    public String salvar(@Validated Produto produto, Errors erros, RedirectAttributes attributes,
-                         @RequestParam(value = "file", required = false) MultipartFile file) {
-
-        if (erros.hasErrors()) {
-            return CADASTRO_VIEW;
-        }
-
-        if (!file.isEmpty()) {
-            AvatarProd avatar = avatarService.getAvatarByUpload(file);
-            produto.setAvatar(avatar);
-        }
-
-        try {
-            produtoService.salvar(produto);
-            attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
-            return "redirect:/produtos";
-
-        } catch (IllegalArgumentException e) {
-            erros.rejectValue("Erro no cadastro", null, e.getMessage());
-            return CADASTRO_VIEW;
-        }
-    }
-
-    @GetMapping("/detalhes/{id}")
-    public ModelAndView perfil(@PathVariable("id") Produto produto) {
-        ModelAndView view = new ModelAndView();
-        view.setViewName("produto/produto-detalhes");
-        view.addObject("produto", produto);
-        return view;
-    }
-
     @GetMapping("/{id}")
     public ModelAndView preeditar(@PathVariable("id") Produto produto) {
         ModelAndView view = new ModelAndView(ATUALIZAR_VIEW);
@@ -105,10 +81,41 @@ public class ProdutoController {
         return view;
     }
 
+    @PostMapping
+    public String salvar(@Validated Produto produto, Errors erros, RedirectAttributes attributes,
+                         @RequestParam(value = "fileAvt", required = false) MultipartFile fileAvt,
+                         @RequestParam(value = "fileLayout", required = false) MultipartFile fileLayout) {
+
+        if (erros.hasErrors()) {
+            return CADASTRO_VIEW;
+        }
+
+        if (!fileAvt.isEmpty()) {
+            AvatarProd avatar = avatarService.getAvatarByUpload(fileAvt);
+            produto.setAvatar(avatar);
+        }
+
+        if (!fileLayout.isEmpty()) {
+            LayoutProd layout = storageService.store(fileLayout);
+            produto.setLayout(layout);
+        }
+
+        try {
+            produtoService.salvar(produto);
+            attributes.addFlashAttribute("mensagem", "Produto salvo com sucesso!");
+            return PRODUTOS_VIEW;
+
+        } catch (IllegalArgumentException e) {
+            erros.rejectValue("Erro no cadastro", null, e.getMessage());
+            return CADASTRO_VIEW;
+        }
+    }
+
     @PostMapping("/update")
     public ModelAndView editar(@Validated @ModelAttribute("produto") Produto produto,
                                Errors erros, RedirectAttributes attributes,
-                               @RequestParam(value = "file", required = false) MultipartFile file) {
+                               @RequestParam(value = "fileAvt", required = false) MultipartFile fileAvt,
+                               @RequestParam(value = "fileLayout", required = false) MultipartFile fileLayout) {
 
         ModelAndView view = new ModelAndView(PRODUTOS_VIEW);
 
@@ -116,10 +123,20 @@ public class ProdutoController {
             return new ModelAndView(CADASTRO_VIEW);
         }
 
-        if (!file.isEmpty()) {
-            AvatarProd avatar = avatarService.getAvatarByUpload(file);
+        if (!fileAvt.isEmpty()) {
+            AvatarProd avatar = avatarService.getAvatarByUpload(fileAvt);
             avatar.setId(produto.getAvatar().getId());
             produto.setAvatar(avatar);
+        }
+
+        if (!fileLayout.isEmpty()) {
+            LayoutProd layout = storageService.store(fileLayout);
+            if (!StringUtils.isEmpty(produto.getLayout().getId())) layout.setId(produto.getLayout().getId());
+            if (StringUtils.isEmpty(produto.getLayout().getFilename())) produto.getLayout().setFilename(null);
+            if (!StringUtils.isEmpty(produto.getLayout().getFilename())) {
+                storageService.delete(produto.getLayout().getFilename());
+            }
+            produto.setLayout(layout);
         }
 
         try {
@@ -134,9 +151,16 @@ public class ProdutoController {
 
     }
 
+    @GetMapping("/detalhes/{id}")
+    public ModelAndView perfil(@PathVariable("id") Produto produto) {
+        ModelAndView view = new ModelAndView();
+        view.setViewName("produto/produto-detalhes");
+        view.addObject("produto", produto);
+        return view;
+    }
+
     @DeleteMapping("{id}")
     public String excluir(@PathVariable("id") Long id, RedirectAttributes attributes) {
-        System.out.println("delete");
         produtoService.delete(id);
         attributes.addFlashAttribute("mensagem", "Produto excluido com sucesso!");
         return "redirect:/produtos";
@@ -144,7 +168,6 @@ public class ProdutoController {
 
     @PostMapping("/enabled/{id}")
     public String updateEnabled(@PathVariable("id") Long id, RedirectAttributes attributes) {
-        System.out.println("post");
         produtoService.updateEnable(id);
         attributes.addFlashAttribute("mensagem", "Produto excluido com sucesso!");
         return "redirect:/produtos";
@@ -153,6 +176,11 @@ public class ProdutoController {
     @ModelAttribute("categorias")
     public List<Categoria> todoStatusTitulo() {
         return Arrays.asList(Categoria.values());
+    }
+
+    @ExceptionHandler(StorageFileNotFoundException.class)
+    public ResponseEntity<?> handleStorageFileNotFound(StorageFileNotFoundException exc) {
+        return ResponseEntity.notFound().build();
     }
 
 }

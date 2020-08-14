@@ -54,6 +54,7 @@
                                 <th class="text-center col-md-2">Categoria</th>
                                 <th class="text-center col-md-2">Volume</th>
                                 <th class="text-center col-md-2">Data Cadastro</th>
+                                <th class="text-center col-md-2">Layout</th>
                                 <th class="text-center col-md-2">Operação</th>
 
                             </tr>
@@ -86,6 +87,12 @@
 								</td>
 
                                 <td class="text-center" th:text="${{produto.dataCadastro}}"></td>
+
+                                <td  class="text-center">
+									<span th:if="${produto.layout != null}">
+									    <a th:href="${produto.layout.url}" th:text="${produto.layout.filename}" target="_blank"/>
+                                    </span>
+                                </td>
 
                                 <td class="text-center">
 									<a class="btn btn-info btn-xs"

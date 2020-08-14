@@ -49,6 +49,10 @@ public class Produto implements Serializable {
 	@JoinColumn(name = "avatar_id")
 	public AvatarProd avatar;
 
+	@OneToOne(cascade = { CascadeType.ALL, CascadeType.REMOVE }, optional = true)
+	@JoinColumn(name = "layout_id")
+	public LayoutProd layout;
+
 	@Column(name = "imagem_content_type")
 	private String imagemContentType;
 	
@@ -166,6 +170,14 @@ public class Produto implements Serializable {
 
 	public void setVolume(String volume) {
 		this.volume = volume;
+	}
+
+	public LayoutProd getLayout() {
+		return layout;
+	}
+
+	public void setLayout(LayoutProd layout) {
+		this.layout = layout;
 	}
 
 	@Override

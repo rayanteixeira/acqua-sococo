@@ -58,7 +58,7 @@
 										<span class="btn btn-primary btn-file"> <span
 											class="fileinput-new">Selecione a imagem</span> <span
 											class="fileinput-exists">Trocar</span> 
-											<input type="file" name="file" />
+											<input type="file" name="fileAvt" />
 										</span> <a href="#" class="btn btn-danger fileinput-exists"
 											data-dismiss="fileinput">Remover</a>
 									</div>
@@ -107,6 +107,28 @@
 												th:field="*{categoria}"/>
 
 									</select>
+								</div>
+
+								<div class="form-group col-lg-11">
+									<label for="marca">Arquivo de Layout</label>
+									<div class="fileinput fileinput-new input-group btn-block"
+										 data-provides="fileinput">
+										<div class="form-control" data-trigger="fileinput">
+											<span class="fileinput-filename">*pdf / png / jpg</span>
+										</div>
+										<span class="input-group-append">
+											<span class="input-group-text fileinput-exists btn btn-default"
+												  data-dismiss="fileinput" style="margin-top: 10px;">
+											  Remover
+											</span>
+											<span class="input-group-text btn btn-primary btn-file" style="margin-top: 10px;">
+												<span class="fileinput-new">Novo arquivo</span>
+											  <span class="fileinput-exists">Substituir</span>
+											  <input type="file" name="fileLayout"/>
+											</span>
+							 			 </span>
+
+									</div>
 								</div>
 
 								<div class="form-group col-lg-8">
