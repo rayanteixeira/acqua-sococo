@@ -40,31 +40,40 @@
 						<div layout:include="layout/mensagem-geral"></div>
 
 
-						<input type="hidden" th:field="*{id}" /> <input type="hidden"
-							th:field="*{produto}" />
+						<input type="hidden" th:field="*{id}" />
+						<input type="hidden" th:field="*{produto}" />
 
 						<div class="row">
 
 							<div class="col-lg-4" style="text-align: center">
+								<span th:if="${movimentacao.avatar != null}">
 								<img style="width: 238px; height: 238px"
-									th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
+									th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" /></span>
 							</div>
 
 
 							<div class="col-lg-8">
 								<div class="form-group">
-									<label for="produto" class="col-lg-3 control-label">Produto</label>
+									<label for="prodCod" class="col-lg-3 control-label">Código</label>
 									<div class="col-lg-9">
-										<input type="text" class="form-control" readonly="readonly"
+										<input id="prodCod" type="text" class="form-control" readonly="readonly"
+											   th:field="*{produto.id}" />
+									</div>
+
+								</div>
+								<div class="form-group">
+									<label for="prodNome" class="col-lg-3 control-label">Produto</label>
+									<div class="col-lg-9">
+										<input id="prodNome" type="text" class="form-control" readonly="readonly"
 											th:field="*{produto.nome}" />
 									</div>
 
 								</div>
 								<div class="form-group">
-									<label for="produto" class="col-lg-3 control-label">Código
+									<label for="codigoBarras" class="col-lg-3 control-label">Código
 										de Barra</label>
 									<div class="col-lg-9">
-										<input type="text" class="form-control" readonly="readonly"
+										<input id="codigoBarras" type="text" class="form-control" readonly="readonly"
 											th:field="*{produto.codigoDeBarras}" />
 									</div>
 
@@ -72,10 +81,34 @@
 								<div class="form-group">
 									<label for="descricao" class="col-lg-3 control-label">Descrição</label>
 									<div class="col-lg-9">
-										<input type="text" class="form-control" readonly="readonly"
+										<input id="descricao" type="text" class="form-control" readonly="readonly"
 											th:field="*{produto.descricao}" />
 									</div>
 
+								</div>
+
+								<div class="form-group">
+									<label for="marca" class="col-lg-3 control-label">Marca</label>
+									<div class="col-lg-9">
+										<input id="marca" type="text" class="form-control" readonly="readonly"
+											   th:field="*{produto.marca}"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="volume" class="col-lg-3 control-label">Volume</label>
+									<div class="col-lg-9">
+										<input id="volume" type="text" class="form-control" readonly="readonly"
+											   th:field="*{produto.volume}"/>
+									</div>
+								</div>
+
+								<div class="form-group">
+									<label for="categoria" class="col-lg-3 control-label">Categoria</label>
+									<div class="col-lg-9">
+										<input id="categoria" type="text" class="form-control" readonly="readonly"
+											   th:field="*{produto.categoria}"/>
+									</div>
 								</div>
 
 								<div class="form-group">
@@ -122,7 +155,14 @@
 											th:field="*{dataHora}" />
 									</div>
 								</div>
-
+								<div class="form-group">
+									<label for="lote" class="col-lg-3 control-label">Layout</label>
+									<div class="col-lg-9">
+										<span class="card-text" th:if="${movimentacao.produto.layout != null}">
+									    	<a th:href="${movimentacao.produto.layout.url}" th:text="${movimentacao.produto.layout.filename}" target="_blank"/>
+                                    	</span>
+									</div>
+								</div>
 
 								<div class="form-group">
 									<div class="col-lg-8 col-lg-offset-3">
@@ -138,10 +178,8 @@
 						<input type="hidden" th:name="${_csrf.parameterName}"
 							th:value="${_csrf.token}" />
 					</form>
-
-
-
 				</div>
+
 			</div>
 		</div>
 	</div>

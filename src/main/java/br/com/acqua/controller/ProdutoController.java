@@ -31,7 +31,7 @@ public class ProdutoController {
 
     private static final int BUTTONS_TO_SHOW = 15;
     private static final int INITIAL_PAGE = 0;
-    private static final int INITIAL_PAGE_SIZE = 20;
+    private static final int INITIAL_PAGE_SIZE = 5;
     private static final int[] PAGE_SIZES = {5, 10, 20};
 
     private static final String CADASTRO_VIEW = "produto/produto-cadastro";

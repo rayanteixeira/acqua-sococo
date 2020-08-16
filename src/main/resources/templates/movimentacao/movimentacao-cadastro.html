@@ -55,10 +55,18 @@
 							</div>
 
 							<div class="form-group col-lg-7">
+
 								<div class="form-group">
-									<label for="produto" class="col-lg-3 control-label">Produto</label>
+									<label for="prodCod" class="col-lg-3 control-label">Código</label>
 									<div class="col-lg-9">
-										<input type="text" class="form-control" readonly="readonly"
+										<input id="prodCod" type="text" class="form-control" readonly="readonly"
+											   th:field="*{produto.id}" />
+									</div>
+								</div>
+								<div class="form-group">
+									<label for="prodNome" class="col-lg-3 control-label">Produto</label>
+									<div class="col-lg-9">
+										<input id="prodNome" type="text" class="form-control" readonly="readonly"
 											th:field="*{produto.nome}" />
 									</div>
 								</div>
@@ -67,7 +75,7 @@
 									<label for="codigoDeBarras" class="col-lg-3 control-label">Código
 										de Barra</label>
 									<div class="col-lg-9">
-										<input type="text" class="form-control" readonly="readonly"
+										<input id="codigoDeBarras" type="text" class="form-control" readonly="readonly"
 											th:field="*{produto.codigoDeBarras}" />
 									</div>
 								</div>
@@ -75,7 +83,7 @@
 								<div class="form-group">
 									<label for="descricao" class="col-lg-3 control-label">Descrição</label>
 									<div class="col-lg-9">
-										<input type="text" class="form-control" readonly="readonly"
+										<input id="descricao" type="text" class="form-control" readonly="readonly"
 											th:field="*{produto.descricao}" />
 									</div>
 								</div>

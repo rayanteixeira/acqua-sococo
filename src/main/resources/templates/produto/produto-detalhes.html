@@ -42,6 +42,9 @@
 							<div class="col-lg-6">
 
 								<h1 th:text="${produto.nome}"></h1>
+								<label>Código: </label>
+								<span th:text="${produto.id}"></span>
+								<br />
 								<label>Descrição: </label> 
 								<span th:text="${produto.descricao}"></span>
 								<br /> 
@@ -53,6 +56,11 @@
 								<br />
 								<label>Data do Cadastro: </label> <span class="card-text"
 									th:text="${{produto.dataCadastro}}"></span>
+								<br />
+								<label>Layout: </label>
+								<span class="card-text" th:if="${produto.layout != null}">
+									    <a th:href="${produto.layout.url}" th:text="${produto.layout.filename}" target="_blank"/>
+                                    </span>
 							</div>
 
 						</div>

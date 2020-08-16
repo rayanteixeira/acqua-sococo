@@ -44,80 +44,80 @@
 
                         <table class="table table-bordered table-striped">
                             <thead>
-                            <tr>
-                                <th class="text-center col-md-1">Imagem</th>
-                                <th class="text-center col-md-2">Código</th>
-                                <th class="text-center col-md-2">Codigo Barras</th>
-                                <th class="text-center col-md-2">Nome</th>
-                                <th class="text-center col-md-2">Descrição</th>
-                                <th class="text-center col-md-2">Marca</th>
-                                <th class="text-center col-md-2">Categoria</th>
-                                <th class="text-center col-md-2">Volume</th>
-                                <th class="text-center col-md-2">Data Cadastro</th>
-                                <th class="text-center col-md-2">Layout</th>
-                                <th class="text-center col-md-2">Operação</th>
+                                <tr>
+                                    <th class="text-center col-md-1">Imagem</th>
+                                    <th class="text-center col-md-2">Código</th>
+                                    <th class="text-center col-md-2">Codigo Barras</th>
+                                    <th class="text-center col-md-2">Nome</th>
+                                    <th class="text-center col-md-2">Descrição</th>
+                                    <th class="text-center col-md-2">Marca</th>
+                                    <th class="text-center col-md-2">Categoria</th>
+                                    <th class="text-center col-md-2">Volume</th>
+                                    <th class="text-center col-md-2">Data Cadastro</th>
+                                    <th class="text-center col-md-2">Layout</th>
+                                    <th class="text-center col-md-2">Operação</th>
 
-                            </tr>
+                                </tr>
                             </thead>
 
 
                             <tbody>
-                            <tr th:each="produto: ${produtos}">
-                                <td class="text-center"><img id="avatar"
-                                                             th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}"/>
-                                </td>
-                                <td class="text-center" th:text="${produto.id}">1</td>
-                                <td class="text-center" th:text="${produto.codigoDeBarras}">1</td>
-                                <td class="text-center" th:text="${produto.nome}">1</td>
-                                <td class="text-center" th:text="${produto.descricao}">1</td>
-								<td  class="text-center">
-									<span th:if="${produto.marca != null}">
-										<span th:text="${produto.marca}"></span>
-									</span>
-								</td>
-								<td  class="text-center">
-									<span th:if="${produto.categoria != null}">
-										<span th:text="${produto.categoria.descricao}"></span>
-									</span>
-								</td>
-								<td  class="text-center">
-									<span th:if="${produto.volume != null}">
-										<span th:text="${produto.volume}"></span>
-									</span>
-								</td>
+                                <tr th:each="produto: ${produtos}">
+                                    <td class="text-center"><img id="avatar"
+                                                                 th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}"/>
+                                    </td>
+                                    <td class="text-center" th:text="${produto.id}">1</td>
+                                    <td class="text-center" th:text="${produto.codigoDeBarras}">1</td>
+                                    <td class="text-center" th:text="${produto.nome}">1</td>
+                                    <td class="text-center" th:text="${produto.descricao}">1</td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.marca != null}">
+                                            <span th:text="${produto.marca}"></span>
+                                        </span>
+                                    </td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.categoria != null}">
+                                            <span th:text="${produto.categoria.descricao}"></span>
+                                        </span>
+                                    </td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.volume != null}">
+                                            <span th:text="${produto.volume}"></span>
+                                        </span>
+                                    </td>
 
-                                <td class="text-center" th:text="${{produto.dataCadastro}}"></td>
+                                    <td class="text-center" th:text="${{produto.dataCadastro}}"></td>
 
-                                <td  class="text-center">
-									<span th:if="${produto.layout != null}">
-									    <a th:href="${produto.layout.url}" th:text="${produto.layout.filename}" target="_blank"/>
-                                    </span>
-                                </td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.layout != null}">
+                                            <a th:href="${produto.layout.url}" th:text="${produto.layout.filename}" target="_blank"/>
+                                        </span>
+                                    </td>
 
-                                <td class="text-center">
-									<a class="btn btn-info btn-xs"
-                                        th:href="@{/produtos/detalhes/{id}(id=${produto.id})}"
-                                        title="Visualizar" rel="tooltip" data-placement="top"> <span
-                                        class="glyphicon glyphicon-eye-open"></span>
-									</a>
+                                    <td class="text-center">
+                                        <a class="btn btn-info btn-xs"
+                                            th:href="@{/produtos/detalhes/{id}(id=${produto.id})}"
+                                            title="Visualizar" rel="tooltip" data-placement="top"> <span
+                                            class="glyphicon glyphicon-eye-open"></span>
+                                        </a>
 
-									<a class="btn btn-warning btn-xs"
-                                        th:href="@{/produtos/{id}(id=${produto.id})}" title="Editar"
-                                        rel="tooltip" data-placement="top"> <span
-                                        class="glyphicon glyphicon-pencil"></span>
-									</a>
+                                        <a class="btn btn-warning btn-xs"
+                                            th:href="@{/produtos/{id}(id=${produto.id})}" title="Editar"
+                                            rel="tooltip" data-placement="top"> <span
+                                            class="glyphicon glyphicon-pencil"></span>
+                                        </a>
 
-                                    <a class="btn btn-danger btn-xs" data-toggle="modal"
-                                            data-target="#confirmacaoEnabledModal"
-                                            th:attr="data-id=${produto.id}, data-nome=${produto.nome}"
-                                            title="Excluir" rel="tooltip" data-placement="top"> <span
-                                            class="glyphicon glyphicon-remove"></span>
-									</a>
-								</td>
-                            </tr>
+                                        <a class="btn btn-danger btn-xs" data-toggle="modal"
+                                                data-target="#confirmacaoEnabledModal"
+                                                th:attr="data-id=${produto.id}, data-nome=${produto.nome}"
+                                                title="Excluir" rel="tooltip" data-placement="top"> <span
+                                                class="glyphicon glyphicon-remove"></span>
+                                        </a>
+                                    </td>
+                                </tr>
 
                             <tr>
-                                <td class="text-center" colspan="7"
+                                <td class="text-center" colspan="11"
                                     th:if="${#lists.isEmpty(produtos)}">Nenhum produto foi
                                     encontrado
                                 </td>
