@@ -63,13 +63,17 @@
 
                             <tbody>
                                 <tr th:each="produto: ${produtos}">
-                                    <td class="text-center"><img id="avatar"
-                                                                 th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}"/>
+                                    <td class="text-center">
+                                        <span th:if="${produto.avatar != null}">
+                                            <img id="avatar" th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}"/>
+                                        </span>
                                     </td>
                                     <td class="text-center" th:text="${produto.id}">1</td>
                                     <td class="text-center" th:text="${produto.codigoDeBarras}">1</td>
                                     <td class="text-center" th:text="${produto.nome}">1</td>
-                                    <td class="text-center" th:text="${produto.descricao}">1</td>
+                                    <td class="text-center">
+                                         <span th:if="${produto.descricao != null}" th:text="${produto.descricao}"></span>
+                                    </td>
                                     <td  class="text-center">
                                         <span th:if="${produto.marca != null}">
                                             <span th:text="${produto.marca}"></span>
