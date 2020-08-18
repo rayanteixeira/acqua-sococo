@@ -125,7 +125,7 @@ public class ProdutoController {
 
         if (!fileAvt.isEmpty()) {
             AvatarProd avatar = avatarService.getAvatarByUpload(fileAvt);
-            avatar.setId(produto.getAvatar().getId());
+            if (produto.getAvatar() != null) avatar.setId(produto.getAvatar().getId());
             produto.setAvatar(avatar);
         }
 

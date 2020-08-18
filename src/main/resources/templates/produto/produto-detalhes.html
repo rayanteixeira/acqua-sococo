@@ -36,8 +36,13 @@
 					<div class="row">
 						<div class="col-lg-12">
 							<div class="text-center col-lg-4">
-								<img style="width: 238px; height: 238px"
-									th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}" />
+								<span th:if="${produto.avatar != null}" >
+									<img style="width: 238px; height: 238px"
+										th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}" />
+								</span>
+								<span th:if="${produto.avatar == null}" >
+									<img th:src="@{/imagens/default.png}" />
+								</span>
 							</div>
 							<div class="col-lg-6">
 
@@ -47,15 +52,24 @@
 								<br />
 								<label>Descrição: </label> 
 								<span th:text="${produto.descricao}"></span>
-								<br /> 
+								<br />
+								<label>Marca: </label>
+								<span th:text="${produto.marca}"></span>
+								<br />
+								<label>Volume: </label>
+								<span th:text="${produto.volume}"></span>
+								<br />
+								<label>Categoria: </label>
+								<span th:text="${produto.categoria}"></span>
+								<br />
 								<label>Código de Barras: </label> 
 								<span class="card-text" th:text="${produto.codigoDeBarras}"></span> 
 								<br />
 								<label>Status: </label> 
 								<span class="card-text" th:text="${produto.ativo ? 'Ativo' : 'Inativo'}"></span> 
 								<br />
-								<label>Data do Cadastro: </label> <span class="card-text"
-									th:text="${{produto.dataCadastro}}"></span>
+								<label>Data do Cadastro: </label>
+								<span class="card-text" th:text="${{produto.dataCadastro}}"></span>
 								<br />
 								<label>Layout: </label>
 								<span class="card-text" th:if="${produto.layout != null}">

@@ -37,16 +37,23 @@ public class MovimentacaoService {
 
 		Usuario user = userRepository.findByUsername(userName);
 
-		movimentacao.setUsuario(user);
+		if (movimentacao.getUsuario() == null) movimentacao.setUsuario(user);
+
 		try {
 			if (movimentacao.getDataHora() == null) {
 				movimentacao.setDataHora(new Date(System.currentTimeMillis()));
 			}
-			System.out.println("Movimentação Avatar: " + movimentacao.getAvatar().getTitulo());
+			if (movimentacao.getId() != null) {
+				if (movimentacao.getAvatar() == null) {
+					if (movimentacao.getProduto().getAvatar() != null)
+						movimentacao.setAvatar(movimentacao.getProduto().getAvatar());
+				}
+			}
+
 			movimentacaoRepository.save(movimentacao);
 
 		} catch (DataIntegrityViolationException e) {
-			throw new IllegalArgumentException("Formato de data inválido");
+			throw new IllegalArgumentException("Falha cadastar movimentação");
 		}
 	}
 

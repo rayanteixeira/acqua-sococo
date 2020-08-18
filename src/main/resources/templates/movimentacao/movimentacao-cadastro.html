@@ -42,15 +42,22 @@
 						 autocomplete="off">
 
 						<input type="hidden" th:field="*{id}" /> 
-						<input type="hidden" th:field="*{produto}" /> 
+						<input type="hidden" th:field="*{usuario}" />
+						<input type="hidden" th:field="*{produto}" />
 						<input type="hidden" th:field="*{dataHora}" />
 						<input type="hidden" th:field="*{avatar}" />
 
 						
 							<div class="col-lg-5">
 								<div class="card-img-bottom" style="text-align: center;">
-									<img class="img-produto"
-										th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
+									<span th:if="${movimentacao.avatar != null}" >
+										<img class="img-produto"
+											th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
+									</span>
+									<span th:if="${movimentacao.avatar == null}" >
+										<img th:src="@{/imagens/default.png}" />
+									</span>
+
 								</div>
 							</div>
 

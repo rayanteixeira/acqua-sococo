@@ -48,9 +48,12 @@
 							<div class="col-lg-4" style="text-align: center">
 								<span th:if="${movimentacao.avatar != null}">
 								<img style="width: 238px; height: 238px"
-									th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" /></span>
+									th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
+								</span>
+								<span th:if="${movimentacao.produto.avatar == null}" >
+									<img th:src="@{/imagens/default.png}" width="235px" height="215"/>
+								</span>
 							</div>
-
 
 							<div class="col-lg-8">
 								<div class="form-group">
