@@ -110,8 +110,8 @@
 									<span th:if="${movimentacao.avatar != null}">
 										<img id="avatar" th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" width="40px" height="45px"/>
 									</span>
-									<span th:if="${movimentacao.produto.avatar == null}">
-										<img th:src="@{/imagens/default.png}" width="40px" height="45px"/>
+									<span th:if="${movimentacao.avatar == null}" >
+										<img th:src="@{/imagens/default.png}" width="40px" height="45px" />
 									</span>
 								</td>
 

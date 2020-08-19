@@ -13,8 +13,7 @@ import br.com.acqua.entity.AvatarProd;
 import br.com.acqua.entity.Produto;
 
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
-	
-	
+
 	Page<Produto> findAllByOrderByIdAsc(Pageable pageable);
 	
 	Page<Produto> findByEnabledOrderByIdDesc(boolean enaled, Pageable pageable);

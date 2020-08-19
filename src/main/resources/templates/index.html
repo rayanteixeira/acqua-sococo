@@ -157,6 +157,8 @@
 							<thead>
 								<tr>
 									<th class="text-center col-md-1">Imagem</th>
+									<th class="text-center col-md-1">Código</th>
+									<th class="text-center col-md-2">Nome</th>
 									<th class="text-center col-md-2">Código de barras</th>
 									<th class="text-center col-md-2">Nota Fiscal</th>
 									<th class="text-center col-md-1">Operador</th>
@@ -172,7 +174,16 @@
 										<span th:if="${movimentacao.avatar != null}">
 											<img id="avatar" th:src="@{/avatar-prod/load/{id}(id=${movimentacao.avatar.id})}" />
 										</span>
+										<span th:if="${movimentacao.avatar == null}" >
+										<img th:src="@{/imagens/default.png}" width="40px" height="45px" />
+									</span>
 									</td>
+
+									<td style="padding-top: 15px;" class="text-center"
+										th:text="${movimentacao.produto.id}"></td>
+
+									<td style="padding-top: 15px;" class="text-center"
+										th:text="${movimentacao.produto.nome}"></td>
 
 									<td style="padding-top: 15px;" class="text-center"
 										th:text="${movimentacao.produto.codigoDeBarras}"></td>

@@ -62,8 +62,8 @@ public class ProdutoService {
     }
 
     public Produto findByCodigo(ProdutoFilter filtro) {
-        String codigo = filtro.getCodigo() == null ? "%" : filtro.getCodigo();
-        return produtosRepository.findByCodigoDeBarras(codigo);
+//        String codigo = filtro.getCodigo() == null ? "%" : filtro.getCodigo();
+        return produtosRepository.findByCodigoDeBarras(filtro.getCodigo());
     }
 
     @Transactional(readOnly = false)

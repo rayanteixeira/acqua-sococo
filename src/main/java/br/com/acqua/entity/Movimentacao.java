@@ -38,13 +38,16 @@ public class Movimentacao implements Serializable {
 	private String lote;
 
 	@ManyToOne
+	@JoinColumn(name = "produto_id")
 	private Produto produto;
 
 	@OneToOne
+	@JoinColumn(name = "usuario_id")
 	private Usuario usuario;
 
-	@OneToOne
-	public AvatarProd avatar;
+	@OneToOne(cascade = { CascadeType.ALL, CascadeType.REMOVE }, optional = true)
+	@JoinColumn(name = "avatar_id")
+	private AvatarProd avatar;
 
 	public Long getId() {
 		return id;

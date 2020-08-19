@@ -1,27 +1,5 @@
 package br.com.acqua.controller;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import br.com.acqua.dto.MovimentacaoMesAnoDTO;
 import br.com.acqua.entity.Movimentacao;
 import br.com.acqua.entity.Produto;
@@ -30,175 +8,186 @@ import br.com.acqua.repository.filter.MovimentacaoFilter;
 import br.com.acqua.repository.filter.ProdutoFilter;
 import br.com.acqua.service.MovimentacaoService;
 import br.com.acqua.service.ProdutoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.util.StringUtils;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/movimentacoes")
 public class MovimentacaoController {
 
-	private static final int BUTTONS_TO_SHOW = 5;
-	private static final int INITIAL_PAGE = 0;
-	private static final int INITIAL_PAGE_SIZE = 5;
-	private static final int[] PAGE_SIZES = { 5, 10, 20 };
+    private static final int BUTTONS_TO_SHOW = 5;
+    private static final int INITIAL_PAGE = 0;
+    private static final int INITIAL_PAGE_SIZE = 5;
+    private static final int[] PAGE_SIZES = {5, 10, 20};
 
-	private static final String CADASTRO_VIEW = "movimentacao/movimentacao-cadastro";
-	private static final String DETALHES_VIEW = "movimentacao/movimentacao-detalhes";
-	private static final String CADASTRO_LISTVIEW = "movimentacao/movimentacoes";
+    private static final String CADASTRO_VIEW = "movimentacao/movimentacao-cadastro";
+    private static final String DETALHES_VIEW = "movimentacao/movimentacao-detalhes";
+    private static final String CADASTRO_LISTVIEW = "movimentacao/movimentacoes";
 
-	@Autowired
-	private MovimentacaoService movimentacaoService;
+    @Autowired
+    private MovimentacaoService movimentacaoService;
 
-	@Autowired
-	private ProdutoService produtoService;
+    @Autowired
+    private ProdutoService produtoService;
 
-	ModelAndView view;
+    ModelAndView view;
 
-	@GetMapping
-	public ModelAndView showPersonsPage(@RequestParam("pageSize") Optional<Integer> pageSize,
-			@ModelAttribute("filtro") MovimentacaoFilter filtro, @RequestParam("page") Optional<Integer> page) {
-		ModelAndView modelAndView = new ModelAndView(CADASTRO_LISTVIEW);
-		
+    @GetMapping
+    public ModelAndView showPersonsPage(@RequestParam("pageSize") Optional<Integer> pageSize,
+                                        @ModelAttribute("filtro") MovimentacaoFilter filtro, @RequestParam("page") Optional<Integer> page) {
+        ModelAndView modelAndView = new ModelAndView(CADASTRO_LISTVIEW);
 
-		int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 
-		int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
+        int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 
-		Page<Movimentacao> movimentacoes = movimentacaoService.findByPagination(evalPage, evalPageSize);
-		Pager pager = new Pager(movimentacoes.getTotalPages(), movimentacoes.getNumber(), BUTTONS_TO_SHOW);
+        int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
 
-		modelAndView.addObject("movimentacoes", movimentacoes);
-		modelAndView.addObject("selectedPageSize", evalPageSize);
-		modelAndView.addObject("pageSizes", PAGE_SIZES);
-		modelAndView.addObject("pager", pager);
-		return modelAndView;
-	}
+        Page<Movimentacao> movimentacoes = movimentacaoService.findByPagination(evalPage, evalPageSize);
+        Pager pager = new Pager(movimentacoes.getTotalPages(), movimentacoes.getNumber(), BUTTONS_TO_SHOW);
 
-	@GetMapping("/pesquisar")
-	public ModelAndView pesquisarPorPeriodo(@ModelAttribute("filtro") MovimentacaoFilter filtro,
-			@RequestParam("pageSize") Optional<Integer> pageSize, @RequestParam("page") Optional<Integer> page)
-			throws Throwable {
+        modelAndView.addObject("movimentacoes", movimentacoes);
+        modelAndView.addObject("selectedPageSize", evalPageSize);
+        modelAndView.addObject("pageSizes", PAGE_SIZES);
+        modelAndView.addObject("pager", pager);
+        return modelAndView;
+    }
 
-		ModelAndView modelAndView = new ModelAndView("movimentacao/movimentacoes");
+    @GetMapping("/pesquisar")
+    public ModelAndView pesquisarPorPeriodo(@ModelAttribute("filtro") MovimentacaoFilter filtro,
+                                            @RequestParam("pageSize") Optional<Integer> pageSize, @RequestParam("page") Optional<Integer> page)
+            throws Throwable {
 
-		int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
+        ModelAndView modelAndView = new ModelAndView("movimentacao/movimentacoes");
 
-		int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
+        int evalPageSize = pageSize.orElse(INITIAL_PAGE_SIZE);
 
-		Page<Movimentacao> movimentacoes = movimentacaoService.pesquisar(filtro, evalPage, evalPageSize);
+        int evalPage = (page.orElse(0) < 1) ? INITIAL_PAGE : page.get() - 1;
 
-		Pager pager = new Pager(movimentacoes.getTotalPages(), movimentacoes.getNumber(), BUTTONS_TO_SHOW);
+        Page<Movimentacao> movimentacoes = movimentacaoService.pesquisar(filtro, evalPage, evalPageSize);
 
-		modelAndView.addObject("movimentacoes", movimentacoes);
-		modelAndView.addObject("selectedPageSize", evalPageSize);
-		modelAndView.addObject("pageSizes", PAGE_SIZES);
-		modelAndView.addObject("pager", pager);
-		return modelAndView;
-	}
+        Pager pager = new Pager(movimentacoes.getTotalPages(), movimentacoes.getNumber(), BUTTONS_TO_SHOW);
 
-	@GetMapping("/registrar")
-	public ModelAndView pesquisar(@ModelAttribute("filtro") ProdutoFilter filtro) {
+        modelAndView.addObject("movimentacoes", movimentacoes);
+        modelAndView.addObject("selectedPageSize", evalPageSize);
+        modelAndView.addObject("pageSizes", PAGE_SIZES);
+        modelAndView.addObject("pager", pager);
+        return modelAndView;
+    }
 
-		this.view = new ModelAndView("movimentacao/consultar-produto");
+    @GetMapping("/registrar")
+    public ModelAndView pesquisar(@ModelAttribute("filtro") ProdutoFilter filtro) {
 
-		return view;
-	}
+        this.view = new ModelAndView("movimentacao/consultar-produto");
 
-	@GetMapping("/registrar/codigo")
-	public ModelAndView pesquisarProdutoPorCodigo(@ModelAttribute("filtro") ProdutoFilter filtro) {
+        return view;
+    }
 
-		this.view = new ModelAndView(CADASTRO_VIEW);
+    @GetMapping("/registrar/codigo")
+    public ModelAndView pesquisarProdutoPorCodigo(@ModelAttribute("filtro") ProdutoFilter filtro) {
 
-		if (filtro.getCodigo() == "") {
-			return this.pesquisar(filtro);
-		}
-		try {
-			Produto produto = new Produto();
-			produto = produtoService.findByCodigo(filtro);
+        this.view = new ModelAndView(CADASTRO_VIEW);
 
-			if (produto == null) {
-				return this.pesquisar(filtro);
-			}
+        if (StringUtils.isEmpty(filtro.getCodigo())) {
+            return this.pesquisar(filtro);
+        }
+        try {
+            Produto produto = produtoService.findByCodigo(filtro);
 
-			Movimentacao movimentacao = new Movimentacao();
-			movimentacao.setDataHora(new Date(System.currentTimeMillis()));
-			movimentacao.setProduto(produto);
-			movimentacao.setAvatar(produto.avatar);
+            if (produto == null) {
+                return this.pesquisar(filtro);
+            }
+            Movimentacao movimentacao = new Movimentacao();
+            movimentacao.setDataHora(new Date(System.currentTimeMillis()));
+            movimentacao.setProduto(produto);
 
-			view.addObject(movimentacao);
+            movimentacao.setAvatar(produto.getAvatar());
 
-			return view;
+            view.addObject(movimentacao);
 
-		} catch (Exception e) {
-			return this.pesquisar(filtro);
-		}
+            return view;
 
-	}
+        } catch (Exception e) {
+            return this.pesquisar(filtro);
+        }
 
-	@RequestMapping(method = RequestMethod.POST)
-	public String salvar(@Validated Movimentacao movimentacao, RedirectAttributes attributes) throws Exception {
+    }
 
-		try {
+    @RequestMapping(method = RequestMethod.POST)
+    public String salvar(@Validated Movimentacao movimentacao, RedirectAttributes attributes) throws Exception {
 
-			String usernName = SecurityContextHolder.getContext().getAuthentication().getName();
+        try {
 
-			movimentacaoService.salvar(movimentacao, usernName);
+            String usernName = SecurityContextHolder.getContext().getAuthentication().getName();
 
-			attributes.addFlashAttribute("mensagem", "Movimentação salva com Sucesso!");
+            movimentacaoService.salvar(movimentacao, usernName);
 
-			return "redirect:/movimentacoes";
+            attributes.addFlashAttribute("mensagem", "Movimentação salva com Sucesso!");
 
-		} catch (IllegalArgumentException e) {
-			return CADASTRO_VIEW;
-		}
-	}
+            return "redirect:/movimentacoes";
 
-	@GetMapping(value = { "/{id}" })
-	public ModelAndView editar(@Validated @PathVariable("id") Optional<Long> id,
-			@ModelAttribute("movimentacao") Movimentacao movimentacao) {
+        } catch (IllegalArgumentException e) {
+            return CADASTRO_VIEW;
+        }
+    }
 
-		ModelAndView mv = new ModelAndView(CADASTRO_VIEW);
-		if (id.isPresent()) {
-			movimentacao = movimentacaoService.buscar(id.get());
-			mv.addObject("movimentacao", movimentacao);
+    @GetMapping(value = {"/{id}"})
+    public ModelAndView editar(@Validated @PathVariable("id") Optional<Long> id,
+                               @ModelAttribute("movimentacao") Movimentacao movimentacao) {
 
-			System.out.println("OBJETO " + movimentacao);
+        ModelAndView mv = new ModelAndView(CADASTRO_VIEW);
+        if (id.isPresent()) {
+            movimentacao = movimentacaoService.buscar(id.get());
+            mv.addObject("movimentacao", movimentacao);
+        }
 
-		}
+        return mv;
 
-		return mv;
+    }
 
-	}
+    @GetMapping(value = {"/detalhes/{id}"})
+    public ModelAndView detalhes(@PathVariable("id") Optional<Long> id,
+                                 @ModelAttribute("movimentacao") Movimentacao movimentacao) {
 
-	@GetMapping(value = { "/detalhes/{id}" })
-	public ModelAndView detalhes(@PathVariable("id") Optional<Long> id,
-			@ModelAttribute("movimentacao") Movimentacao movimentacao) {
+        ModelAndView mv = new ModelAndView(DETALHES_VIEW);
+        if (id.isPresent()) {
+            movimentacao = movimentacaoService.buscar(id.get());
+            mv.addObject("movimentacao", movimentacao);
 
-		ModelAndView mv = new ModelAndView(DETALHES_VIEW);
-		if (id.isPresent()) {
-			movimentacao = movimentacaoService.buscar(id.get());
-			mv.addObject("movimentacao", movimentacao);
+            System.out.println("OBJETO " + movimentacao);
+        }
 
-			System.out.println("OBJETO " + movimentacao);
-		}
+        return mv;
 
-		return mv;
+    }
 
-	}
+    @DeleteMapping(value = "{id}")
+    private String excluir(@PathVariable Long id, RedirectAttributes attributes) {
 
-	@DeleteMapping(value = "{id}")
-	private String excluir(@PathVariable Long id, RedirectAttributes attributes) {
+        movimentacaoService.excluir(id);
+        attributes.addFlashAttribute("mensagem", "Movimentação excluída com sucesso!");
+        return "redirect:/movimentacoes";
+    }
 
-		movimentacaoService.excluir(id);
-		attributes.addFlashAttribute("mensagem", "Movimentação excluída com sucesso!");
-		return "redirect:/movimentacoes";
-	}
+    @GetMapping("/countMesAno")
+    public ResponseEntity<List<MovimentacaoMesAnoDTO>> getCountMovimentacoesByMesAno() {
+        // ModelAndView view = new ModelAndView("index");
 
-	@GetMapping("/countMesAno")
-	public ResponseEntity<List<MovimentacaoMesAnoDTO>> getCountMovimentacoesByMesAno() {
-		// ModelAndView view = new ModelAndView("index");
-
-		// view.addObject("countMovimentacoesByMesAno",
-		// movimentacaoService.getCountMovimentacoesByMesAno() );
-		return ResponseEntity.status(HttpStatus.OK).body(movimentacaoService.getCountMovimentacoesByMesAno());
-	}
+        // view.addObject("countMovimentacoesByMesAno",
+        // movimentacaoService.getCountMovimentacoesByMesAno() );
+        return ResponseEntity.status(HttpStatus.OK).body(movimentacaoService.getCountMovimentacoesByMesAno());
+    }
 
 }
