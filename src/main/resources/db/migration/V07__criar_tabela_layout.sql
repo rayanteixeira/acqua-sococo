@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS layouts
+(
+    id       SERIAL NOT NULL,
+    filename VARCHAR(255) DEFAULT NULL,
+    url      VARCHAR(255) DEFAULT NULL,
+    PRIMARY KEY (id)
+);

@@ -1,0 +1,3 @@
+ALTER TABLE produto ADD column categoria VARCHAR(255) DEFAULT NULL;
+ALTER TABLE produto ADD column marca VARCHAR(255) DEFAULT NULL;
+ALTER TABLE produto ADD column volume VARCHAR(255) DEFAULT NULL;

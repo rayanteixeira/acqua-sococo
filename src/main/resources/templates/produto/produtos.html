@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="layout/layoutPadrao">
+
+<head>
+    <title>Pesquisa de Produtos</title>
+</head>
+
+<section layout:fragment="conteudo">
+
+    <div class="row">
+        <div class="col-lg-10 col-lg-offset-1 col-sm-12">
+            <ol class="breadcrumb">
+                <li><a th:href="@{/index}">Dashboard</a></li>
+                <li class="active">Produtos</li>
+            </ol>
+
+            <div layout:include="layout/mensagem-geral"></div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <div class="row">
+                        <div class="col-lg-1">
+                            <!-- <i class="fa fa-support fa-5x"></i> -->
+                            <img class="imagem_acao" th:src="@{/imagens/ic_produtos.png}"/>
+                        </div>
+                        <div class="col-lg-6">
+                            <h3 class="page-header">
+                                Produtos <small>Todos os produtos</small>
+                            </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    <a th:href="@{/produtos/novo}">
+                        <button class="btn btn-info">
+                            <i class="glyphicon glyphicon-plus"></i> Novo produto
+                        </button>
+                    </a>
+                    <p></p>
+                    <div class="table-responsive">
+
+                        <table class="table table-bordered table-striped">
+                            <thead>
+                                <tr>
+                                    <th class="text-center col-md-1">Imagem</th>
+                                    <th class="text-center col-md-2">Código</th>
+                                    <th class="text-center col-md-2">Codigo Barras</th>
+                                    <th class="text-center col-md-2">Nome</th>
+                                    <th class="text-center col-md-2">Descrição</th>
+                                    <th class="text-center col-md-2">Marca</th>
+                                    <th class="text-center col-md-2">Categoria</th>
+                                    <th class="text-center col-md-2">Volume</th>
+                                    <th class="text-center col-md-2">Data Cadastro</th>
+                                    <th class="text-center col-md-2">Layout</th>
+                                    <th class="text-center col-md-2">Operação</th>
+
+                                </tr>
+                            </thead>
+
+
+                            <tbody>
+                                <tr th:each="produto: ${produtos}">
+                                    <td class="text-center">
+                                        <span th:if="${produto.avatar != null}">
+                                            <img id="avatar" th:src="@{/avatar-prod/load/{id}(id=${produto.avatar.id})}" width="45" height="55"/>
+                                        </span>
+                                        <span th:if="${produto.avatar == null}" >
+									        <img th:src="@{/imagens/default.png}" width="45" height="55"/>
+								        </span>
+                                    </td>
+                                    <td class="text-center" th:text="${produto.id}">1</td>
+                                    <td class="text-center" th:text="${produto.codigoDeBarras}">1</td>
+                                    <td class="text-center" th:text="${produto.nome}">1</td>
+                                    <td class="text-center">
+                                         <span th:if="${produto.descricao != null}" th:text="${produto.descricao}"></span>
+                                    </td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.marca != null}">
+                                            <span th:text="${produto.marca}"></span>
+                                        </span>
+                                    </td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.categoria != null}">
+                                            <span th:text="${produto.categoria.descricao}"></span>
+                                        </span>
+                                    </td>
+                                    <td  class="text-center">
+                                        <span th:if="${produto.volume != null}">
+                                            <span th:text="${produto.volume}"></span>
+                                        </span>
+                                    </td>
+
+                                    <td class="text-center" th:text="${{produto.dataCadastro}}"></td>
+
+                                    <td  class="text-center">
+                                        <span th:if="${produto.layout != null}">
+                                            <a th:href="${produto.layout.url}" th:text="${produto.layout.filename}" target="_blank"/>
+                                        </span>
+                                    </td>
+
+                                    <td class="text-center">
+                                        <a class="btn btn-info btn-xs"
+                                            th:href="@{/produtos/detalhes/{id}(id=${produto.id})}"
+                                            title="Visualizar" rel="tooltip" data-placement="top"> <span
+                                            class="glyphicon glyphicon-eye-open"></span>
+                                        </a>
+
+                                        <a class="btn btn-warning btn-xs"
+                                            th:href="@{/produtos/{id}(id=${produto.id})}" title="Editar"
+                                            rel="tooltip" data-placement="top"> <span
+                                            class="glyphicon glyphicon-pencil"></span>
+                                        </a>
+
+                                        <a class="btn btn-danger btn-xs" data-toggle="modal"
+                                                data-target="#confirmacaoEnabledModal"
+                                                th:attr="data-id=${produto.id}, data-nome=${produto.nome}"
+                                                title="Excluir" rel="tooltip" data-placement="top"> <span
+                                                class="glyphicon glyphicon-remove"></span>
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            <tr>
+                                <td class="text-center" colspan="11"
+                                    th:if="${#lists.isEmpty(produtos.content)}">Nenhum produto foi
+                                    encontrado
+                                </td>
+                            </tr>
+
+                            </tbody>
+
+                        </table>
+
+
+                        <!-- Paginação -->
+                        <div class="paginacao" th:if="${!#lists.isEmpty(produtos.content)}">
+                            <div class="form-group col-lg-1">
+                                <select class="form-control pagination"
+                                        id="pageSizeSelectProduto">
+                                    <option th:each="pageSize : ${pageSizes}" th:text="${pageSize}"
+                                            th:value="${pageSize}"
+                                            th:selected="${pageSize} == ${selectedPageSize}"></option>
+                                </select>
+                            </div>
+                            <div class="form-group col-lg-11 pagination-centered" th:if="${produtos.totalPages != 1}">
+                                <ul class="pagination">
+                                    <li th:class="${produtos.number == 0} ? disabled"><a
+                                            class="pageLink"
+                                            th:href="@{/produtos/(pageSize=${selectedPageSize}, page=1)}">&laquo;</a>
+                                    </li>
+                                    <li th:class="${produtos.number == 0} ? disabled"><a
+                                            class="pageLink"
+                                            th:href="@{/produtos/(pageSize=${selectedPageSize}, page=${produtos.number})}">&larr;</a>
+                                    </li>
+                                    <li
+                                            th:class="${produtos.number == (page - 1)} ? 'active pointer-disabled'"
+                                            th:each="page : ${#numbers.sequence(pager.startPage, pager.endPage)}">
+                                        <a class="pageLink"
+                                           th:href="@{/produtos/(pageSize=${selectedPageSize}, page=${page})}"
+                                           th:text="${page}"></a>
+                                    </li>
+                                    <li
+                                            th:class="${produtos.number + 1 == produtos.totalPages} ? disabled">
+                                        <a class="pageLink"
+                                           th:href="@{/produtos/(pageSize=${selectedPageSize}, page=${produtos.number + 2})}">&rarr;</a>
+                                    </li>
+                                    <li
+                                            th:class="${produtos.number + 1 == produtos.totalPages} ? disabled">
+                                        <a class="pageLink"
+                                           th:href="@{/produtos/(pageSize=${selectedPageSize}, page=${produtos.totalPages})}">&raquo;</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+
+
+                    </div>
+
+
+                </div>
+                <div layout:include="produto/dialog-enabled-exclusao"></div>
+            </div>
+        </div>
+    </div>
+
+</section>
+
+
+</html>

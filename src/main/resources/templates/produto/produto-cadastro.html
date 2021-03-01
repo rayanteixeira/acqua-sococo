@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/layoutPadrao">
+
+
+<head>
+<title>Cadastro de Produto</title>
+</head>
+
+<section layout:fragment="conteudo">
+
+	<div class="row">
+		<div class="col-lg-10 col-lg-offset-1 col-sm-12 col-sm-12">
+		<ol class="breadcrumb">
+				<li><a th:href="@{/index}">Dashboard</a></li>
+				<li class="active">Produtos</li>
+				<li class="active">Cadastrar</li>
+			</ol>
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<div class="row">
+						<div class="col-lg-1">
+							<!-- <i class="fa fa-support fa-5x"></i> -->
+							<img class="imagem_acao" th:src="@{/imagens/ic_produtos.png}" />
+						</div>
+						<div class="col-lg-6">
+							<h3 class="page-header">
+								Produtos <small>Cadastrar produto</small>
+							</h3>
+						</div>
+					</div>
+				</div>
+
+				<div class="panel-body">
+					<form class="form-horizontal" method="POST"
+						enctype="multipart/form-data" th:action="@{/produtos}"
+						th:object="${produto}" autocomplete="off">
+
+						<input type="hidden" th:field="*{id}" /> 
+						<input type="hidden" th:field="*{dataCadastro}" /> 
+						<input type="hidden" th:field="*{avatar}" />
+
+						<div layout:include="layout/mensagem-erro"></div>
+						<div layout:include="layout/mensagem-geral"></div>
+
+						<div style="padding: 5% 10px 5% 10px;" class="row">
+							<div class="text-center col-lg-3 col-md-3 col-sm-4 col-lg-offset-1">
+								<div class="fileinput fileinput-new" data-provides="fileinput">
+									<div class="fileinput-new thumbnail"
+										style="width: 238px; height: 218px;">
+										<img th:src="@{/imagens/default.png}" />
+									</div>
+									<div class="fileinput-preview fileinput-exists thumbnail"
+										style="width: 238px; height: 218px;"></div>
+									<div>
+										<span class="btn btn-primary btn-file"> <span
+											class="fileinput-new">Selecione a imagem</span> <span
+											class="fileinput-exists">Trocar</span> 
+											<input type="file" name="fileAvt" />
+										</span> <a href="#" class="btn btn-danger fileinput-exists"
+											data-dismiss="fileinput">Remover</a>
+									</div>
+								</div>
+
+							</div>
+
+							<div class="form-cadprod col-lg-7 col-md-7 col-sm-7 col-sm-offset-1 col-lg-offset-1">
+								<div class="form-group col-lg-11"
+									th:classappend="${#fields.hasErrors('codigoDeBarras')} ? has-error">
+									<label for="codigoDeBarras">Código de Barras</label> <input
+										type="number" class="form-control col-lg-3" id="codigoDeBarras"
+										th:field="*{codigoDeBarras}" autofocus="autofocus"
+										placeholder="Codigo de Barras" />
+								</div>
+								<div class="form-group col-lg-11"
+									th:classappend="${#fields.hasErrors('nome')} ? has-error">
+									<label for="nome">Nome</label> <input type="text"
+										class="form-control" id="nome" th:field="*{nome}"
+										placeholder="Nome" />
+								</div>
+								<div class="form-group col-lg-11"
+									th:classappend="${#fields.hasErrors('descricao')} ? has-error">
+									<label for="descricao">Descrição</label> <input type="text"
+										class="form-control" id="descricao" th:field="*{descricao}"
+										placeholder="Descricao" />
+								</div>
+								<div class="form-group col-lg-11"
+									 th:classappend="${#fields.hasErrors('marca')} ? has-error">
+									<label for="marca">Marca</label> <input type="text"
+																			class="form-control" id="marca" th:field="*{marca}"
+																			placeholder="Marca" />
+								</div>
+								<div class="form-group col-lg-11"
+									 th:classappend="${#fields.hasErrors('volume')} ? has-error">
+									<label for="marca">Volume</label>
+									<input type="text"
+										   class="form-control" id="volume" th:field="*{volume}"
+										   placeholder="Volume" />
+								</div>
+								<div class="form-group  col-lg-11">
+									<label for="categoria">Categorias</label>
+									<select class="form-control" name="categoria" id="categoria">
+										<option th:each="categoria : ${categorias}"
+												th:value="${categoria}" th:text="${categoria.descricao}"
+												th:field="*{categoria}"/>
+
+									</select>
+								</div>
+
+								<div class="form-group col-lg-11">
+									<label for="marca">Arquivo de Layout</label>
+									<div class="fileinput fileinput-new input-group btn-block"
+										 data-provides="fileinput">
+										<div class="form-control" data-trigger="fileinput">
+											<span class="fileinput-filename">*pdf / png / jpg</span>
+										</div>
+										<span class="input-group-append">
+											<span class="input-group-text fileinput-exists btn btn-default"
+												  data-dismiss="fileinput" style="margin-top: 10px;">
+											  Remover
+											</span>
+											<span class="input-group-text btn btn-primary btn-file" style="margin-top: 10px;">
+												<span class="fileinput-new">Novo arquivo</span>
+											  <span class="fileinput-exists">Substituir</span>
+											  <input type="file" name="fileLayout"/>
+											</span>
+							 			 </span>
+
+									</div>
+								</div>
+
+								<div class="form-group col-lg-8">
+									<button type="submit" class="col-lg-5 btn btn-success">
+										<i class="fa fa-floppy-o" aria-hidden="true"></i> SALVAR
+									</button>
+									<a th:href="@{/produtos}"
+										class="col-lg-5 col-lg-offset-1 btn btn-default"> CANCELAR</a>
+									<!-- <button  type="reset"  class="col-lg-5 col-lg-offset-1 btn btn-default">Limpar</button> -->
+								</div>
+
+
+							</div>
+
+
+						</div>
+
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+
+</section>
+
+</html>
